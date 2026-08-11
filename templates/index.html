@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Convert Excel, Word, and PDF files quickly and securely.">
+  <title>File World- File converter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='word.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='batch.css') }}">
+</head>
+<body>
+  <div class="page-glow"></div>
+  <nav class="nav container"><a class="brand" href="/"><span class="brand-mark">F</span> File World</a><span class="nav-note">Simple file conversion</span></nav>
+  <main class="container">
+       <section class="converter" aria-labelledby="converter-title">
+      <div class="converter-head"><div><p class="eyebrow">CONVERT A FILE</p><h2 id="converter-title">Choose your direction</h2></div><span class="secure">● Files stay private</span></div>
+      <form method="post" enctype="multipart/form-data" id="convert-form">
+        <div class="mode-switch" role="radiogroup" aria-label="Conversion format">
+          <label class="mode {% if selected_mode == 'excel-to-pdf' %}active{% endif %}"><input type="radio" name="mode" value="excel-to-pdf" {% if selected_mode == 'excel-to-pdf' %}checked{% endif %}><span class="file-icon excel">X</span><span><strong>Excel to PDF</strong><small>Spreadsheet → shareable document</small></span></label>
+          <label class="mode {% if selected_mode == 'pdf-to-excel' %}active{% endif %}"><input type="radio" name="mode" value="pdf-to-excel" {% if selected_mode == 'pdf-to-excel' %}checked{% endif %}><span class="file-icon pdf">P</span><span><strong>PDF to Excel</strong><small>Document tables → workbook</small></span></label>
+          <label class="mode {% if selected_mode == 'word-to-excel' %}active{% endif %}"><input type="radio" name="mode" value="word-to-excel" {% if selected_mode == 'word-to-excel' %}checked{% endif %}><span class="file-icon word">W</span><span><strong>Word to Excel</strong><small>Document content → workbook</small></span></label>
+          <label class="mode {% if selected_mode == 'word-to-pdf' %}active{% endif %}"><input type="radio" name="mode" value="word-to-pdf" {% if selected_mode == 'word-to-pdf' %}checked{% endif %}><span class="file-icon word">W</span><span><strong>Word to PDF</strong><small>Document → shareable PDF</small></span></label>
+        </div>
+        <label class="dropzone" id="dropzone" for="file-input"><input id="file-input" type="file" name="file" accept=".xlsx,.xlsm" multiple required><span class="upload-symbol">↥</span><strong id="upload-title">Drop your Excel files here</strong><span id="upload-help">or browse from your device</span><small id="file-types">XLSX, XLSM · select multiple files · 16 MB each</small></label>
+        <div class="file-picked" id="file-picked" hidden><span class="picked-dot"></span><span id="picked-name"></span><button type="button" id="clear-file" aria-label="Remove selected files">×</button></div>
+        {% if error %}<p class="alert error">{{ error }}</p>{% endif %}
+        {% if result %}<div class="alert success"><span>✓</span><div><strong>{{ result.outputs|length }} {{ result.label }}{{ 's' if result.outputs|length != 1 else '' }} ready.</strong>{% for output in result.outputs %}<a href="{{ url_for('download', filename=output.name) }}">Download {{ output.download_name }}</a>{% endfor %}{% if result.zip_name %}<a class="zip-link" href="{{ url_for('download', filename=result.zip_name) }}">Download all as ZIP</a>{% endif %}</div></div>{% endif %}
+        <button class="convert-button" type="submit"><span>Convert file</span><b>→</b></button>
+      </form>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
